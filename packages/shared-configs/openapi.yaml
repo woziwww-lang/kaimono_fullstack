@@ -1,0 +1,469 @@
+openapi: 3.0.3
+info:
+  title: Price Comparison API
+  version: 0.1.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: OK
+  /api/stores:
+    get:
+      summary: List stores
+      parameters:
+        - in: query
+          name: q
+          description: product keyword
+          schema:
+            type: string
+        - in: query
+          name: category
+          schema:
+            type: string
+        - in: query
+          name: bbox
+          description: minLon,minLat,maxLon,maxLat
+          schema:
+            type: string
+        - in: query
+          name: user_lat
+          schema:
+            type: number
+        - in: query
+          name: user_lon
+          schema:
+            type: number
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: offset
+          schema:
+            type: integer
+        - in: query
+          name: sort
+          schema:
+            type: string
+        - in: query
+          name: order
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Stores
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreListResponse'
+  /api/stores/nearby:
+    get:
+      summary: List nearby stores
+      parameters:
+        - in: query
+          name: lat
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: lon
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: radius
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: offset
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Nearby stores
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreListResponse'
+  /api/stores/{id}:
+    get:
+      summary: Get store by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreResponse'
+  /api/stores/{id}/prices:
+    get:
+      summary: Get store prices
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: category
+          schema:
+            type: string
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: offset
+          schema:
+            type: integer
+        - in: query
+          name: sort
+          schema:
+            type: string
+        - in: query
+          name: order
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Prices
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PriceListResponse'
+  /api/stores/{id}/price-stats:
+    get:
+      summary: Get store price stats
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: category
+          schema:
+            type: string
+        - in: query
+          name: q
+          schema:
+            type: string
+        - in: query
+          name: days
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Price stats
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorePriceStatsResponse'
+  /api/products:
+    get:
+      summary: List products
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: offset
+          schema:
+            type: integer
+        - in: query
+          name: sort
+          schema:
+            type: string
+        - in: query
+          name: order
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Products
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductListResponse'
+  /api/products/categories:
+    get:
+      summary: List product categories
+      responses:
+        '200':
+          description: Categories
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryListResponse'
+  /api/products/search:
+    get:
+      summary: Search products
+      parameters:
+        - in: query
+          name: q
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: offset
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Products
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductListResponse'
+  /api/products/{id}:
+    get:
+      summary: Get product by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+  /api/products/{id}/prices:
+    get:
+      summary: Get product prices
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: offset
+          schema:
+            type: integer
+        - in: query
+          name: sort
+          schema:
+            type: string
+        - in: query
+          name: order
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Prices
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PriceListResponse'
+components:
+  schemas:
+    ApiError:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    Meta:
+      type: object
+      properties:
+        count:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+    Store:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        address:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        distance:
+          type: number
+        min_price:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        category:
+          type: string
+        barcode:
+          type: string
+        created_at:
+          type: string
+    Price:
+      type: object
+      properties:
+        id:
+          type: integer
+        store_id:
+          type: integer
+        product_id:
+          type: integer
+        price:
+          type: number
+        currency:
+          type: string
+        recorded_at:
+          type: string
+        created_at:
+          type: string
+        store:
+          $ref: '#/components/schemas/Store'
+        product:
+          $ref: '#/components/schemas/Product'
+    PriceSummary:
+      type: object
+      properties:
+        min_price:
+          type: number
+        max_price:
+          type: number
+        avg_price:
+          type: number
+        currency:
+          type: string
+    DailyPriceStats:
+      type: object
+      properties:
+        date:
+          type: string
+        avg_price:
+          type: number
+        min_price:
+          type: number
+        max_price:
+          type: number
+        count:
+          type: integer
+    StorePriceStats:
+      type: object
+      properties:
+        store_id:
+          type: integer
+        category:
+          type: string
+        query:
+          type: string
+        days:
+          type: integer
+        summary:
+          $ref: '#/components/schemas/PriceSummary'
+        daily:
+          type: array
+          items:
+            $ref: '#/components/schemas/DailyPriceStats'
+    StoreListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Store'
+        meta:
+          $ref: '#/components/schemas/Meta'
+        error:
+          $ref: '#/components/schemas/ApiError'
+    StoreResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Store'
+        meta:
+          $ref: '#/components/schemas/Meta'
+        error:
+          $ref: '#/components/schemas/ApiError'
+    ProductListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+        meta:
+          $ref: '#/components/schemas/Meta'
+        error:
+          $ref: '#/components/schemas/ApiError'
+    ProductResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Product'
+        meta:
+          $ref: '#/components/schemas/Meta'
+        error:
+          $ref: '#/components/schemas/ApiError'
+    CategoryListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: string
+        meta:
+          $ref: '#/components/schemas/Meta'
+        error:
+          $ref: '#/components/schemas/ApiError'
+    PriceListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Price'
+        meta:
+          $ref: '#/components/schemas/Meta'
+        error:
+          $ref: '#/components/schemas/ApiError'
+    StorePriceStatsResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/StorePriceStats'
+        meta:
+          $ref: '#/components/schemas/Meta'
+        error:
+          $ref: '#/components/schemas/ApiError'

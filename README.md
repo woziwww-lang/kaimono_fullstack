@@ -144,9 +144,10 @@ make install
 
 ```bash
 make docker-up
+make db-migrate-up
 ```
 
-PostgreSQL + PostGIS が起動し、サンプルデータが自動投入されます。
+PostgreSQL + PostGIS が起動し、マイグレーションとサンプルデータが投入されます。
 
 ### ステップ 3: アプリケーション起動
 
@@ -245,13 +246,16 @@ cd apps/mobile && flutter test -v   # Flutter 詳細モード
 
 ## 🌐 API エンドポイント
 
+> **認証 (任意)**: `API_KEY` を設定した場合、`X-API-Key` ヘッダー または `Authorization: Bearer <token>` が必要です。
+
 ### 店舗 (Stores)
 
 | Method | Endpoint | 説明 | パラメータ |
 |--------|----------|------|-----------|
-| `GET` | `/api/stores` | 全店舗取得 | - |
-| `GET` | `/api/stores/nearby` | 近くの店舗検索 | `lat`, `lon`, `radius` |
+| `GET` | `/api/stores` | 全店舗取得 | `q`, `category`, `bbox`, `user_lat`, `user_lon`, `limit`, `offset`, `sort`, `order` |
+| `GET` | `/api/stores/nearby` | 近くの店舗検索 | `lat`, `lon`, `radius`, `limit`, `offset` |
 | `GET` | `/api/stores/:id` | 店舗詳細 | - |
+| `GET` | `/api/stores/:id/prices` | 店舗別価格一覧 | `category`, `limit`, `offset`, `sort`, `order` |
 
 **例: 近くの店舗検索**
 ```bash
@@ -261,7 +265,7 @@ GET /api/stores/nearby?lat=35.6812&lon=139.7671&radius=5000
 レスポンス:
 ```json
 {
-  "stores": [
+  "data": [
     {
       "id": 1,
       "name": "セブンイレブン 渋谷店",
@@ -271,7 +275,11 @@ GET /api/stores/nearby?lat=35.6812&lon=139.7671&radius=5000
       "distance": 1234.56
     }
   ],
-  "count": 5
+  "meta": {
+    "count": 5,
+    "limit": 20,
+    "offset": 0
+  }
 }
 ```
 
@@ -279,10 +287,11 @@ GET /api/stores/nearby?lat=35.6812&lon=139.7671&radius=5000
 
 | Method | Endpoint | 説明 | パラメータ |
 |--------|----------|------|-----------|
-| `GET` | `/api/products` | 全商品取得 | - |
-| `GET` | `/api/products/search` | 商品検索 | `q` (keyword) |
+| `GET` | `/api/products` | 全商品取得 | `limit`, `offset`, `sort`, `order` |
+| `GET` | `/api/products/categories` | カテゴリ一覧 | - |
+| `GET` | `/api/products/search` | 商品検索 | `q` (keyword), `limit`, `offset` |
 | `GET` | `/api/products/:id` | 商品詳細 | - |
-| `GET` | `/api/products/:id/prices` | 価格比較 | - |
+| `GET` | `/api/products/:id/prices` | 価格比較 | `limit`, `offset`, `sort`, `order` |
 
 **例: 商品価格比較**
 ```bash
@@ -292,7 +301,7 @@ GET /api/products/1/prices
 レスポンス:
 ```json
 {
-  "prices": [
+  "data": [
     {
       "id": 1,
       "price": 115.00,
@@ -302,7 +311,12 @@ GET /api/products/1/prices
         "name": "ファミリーマート 新宿店"
       }
     }
-  ]
+  ],
+  "meta": {
+    "count": 1,
+    "limit": 20,
+    "offset": 0
+  }
 }
 ```
 
@@ -311,6 +325,9 @@ GET /api/products/1/prices
 | Method | Endpoint | 説明 |
 |--------|----------|------|
 | `GET` | `/health` | サーバーステータス |
+| `GET` | `/metrics` | Prometheus メトリクス |
+
+API スキーマは `packages/shared-configs/openapi.yaml` にあります。
 
 ---
 
@@ -325,6 +342,9 @@ make docker-up       # Docker 起動
 make docker-down     # Docker 停止
 make docker-logs     # Docker ログ表示
 make db-status       # データベース状態確認
+make db-migrate-up   # DB マイグレーション適用
+make db-migrate-down # DB マイグレーション 1 つ戻す
+make db-migrate-version # マイグレーション状態確認
 make server          # Go サーバー起動
 make web             # Next.js 起動 (Turbopack)
 make mobile          # Flutter 起動
@@ -342,11 +362,21 @@ make reset           # 完全リセット
 **Backend (.env)**
 ```bash
 DB_HOST=localhost
+DB_PORT=5432
 DB_USER=admin
 DB_PASSWORD=password
 DB_NAME=price_comparison
 DB_SSLMODE=disable
+REDIS_ADDR=localhost:6379
+REDIS_PASSWORD=
+REDIS_DB=0
+CACHE_TTL_SECONDS=60
+API_KEY=
+CORS_ORIGINS=http://localhost:3000,http://localhost:3001
+METRICS_ROUTE=/metrics
+LOG_LEVEL=info
 PORT=8080
+MIGRATIONS_PATH=../../packages/database/migrations
 ```
 
 **Web (.env.local)**
@@ -365,10 +395,13 @@ apps/server/internal/domain/models.go
 # 2. リポジトリを作成
 apps/server/internal/repository/your_repository.go
 
-# 3. ハンドラーを作成
+# 3. ユースケース（ビジネスロジック）を作成
+apps/server/internal/usecase/your_usecase.go
+
+# 4. ハンドラーを作成
 apps/server/internal/handler/your_handler.go
 
-# 4. main.go にルートを追加
+# 5. main.go にルートを追加
 apps/server/cmd/main.go
 ```
 

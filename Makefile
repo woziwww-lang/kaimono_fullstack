@@ -1,4 +1,4 @@
-.PHONY: help install docker-up docker-down server web mobile clean
+.PHONY: help install docker-up docker-down server web mobile clean db-migrate-up db-migrate-down db-migrate-version
 
 # Auto-detect docker compose command (support both v1 and v2)
 DOCKER_COMPOSE := $(shell command -v docker-compose 2>/dev/null || echo "docker compose")
@@ -23,12 +23,26 @@ docker-up: ## Start Docker containers (PostgreSQL + Redis)
 	$(DOCKER_COMPOSE) up -d
 	@echo "Waiting for database to be ready..."
 	@sleep 5
+	@echo "Applying database migrations..."
+	@$(MAKE) db-migrate-up
 	@echo "Docker containers are running!"
 
 docker-down: ## Stop Docker containers
 	@echo "Stopping Docker containers..."
 	$(DOCKER_COMPOSE) down
 	@echo "Docker containers stopped!"
+
+db-migrate-up: ## Apply database migrations
+	@echo "Applying database migrations..."
+	cd apps/server && go run cmd/migrate/main.go up
+
+db-migrate-down: ## Roll back last database migration
+	@echo "Rolling back last database migration..."
+	cd apps/server && go run cmd/migrate/main.go down
+
+db-migrate-version: ## Show current migration version
+	@echo "Current migration version..."
+	cd apps/server && go run cmd/migrate/main.go version
 
 docker-logs: ## View Docker container logs
 	$(DOCKER_COMPOSE) logs -f
@@ -71,6 +85,7 @@ dev: docker-up ## Start all services in development mode
 	@echo "Web App: http://localhost:3000"
 	@echo ""
 	@echo "Run the following commands in separate terminals:"
+	@echo "  make db-migrate-up # Apply DB migrations"
 	@echo "  make server  # Start Go backend"
 	@echo "  make web     # Start Next.js web"
 	@echo "  make mobile  # Start Flutter app"

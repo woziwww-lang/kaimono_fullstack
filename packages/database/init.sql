@@ -1,3 +1,4 @@
+-- NOTE: This file is kept for reference. Prefer migrations in packages/database/migrations.
 -- Enable PostGIS extension
 CREATE EXTENSION IF NOT EXISTS postgis;
 

@@ -1,27 +1,106 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "leaflet/dist/leaflet.css";
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+body {
+  font-family: 'SF Pro Text', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Noto Sans JP', 'Helvetica Neue',
+    Arial, sans-serif;
+  color: #0f172a;
+  background-color: #f8fafc;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+.leaflet-container {
+  font-family: inherit;
+}
+
+.cluster-marker {
+  background: transparent;
+  border: none;
+}
+
+.cluster-bubble {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(15, 118, 110, 0.9);
+  color: #fff;
+  font-weight: 600;
+  border: 2px solid #0f766e;
+  box-shadow: 0 8px 20px rgba(15, 118, 110, 0.25);
+}
+
+.price-marker-wrapper {
+  background: transparent;
+  border: none;
+}
+
+.price-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #0f172a;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.price-marker::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px 5px 0 5px;
+  border-style: solid;
+  border-color: #0f172a transparent transparent transparent;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.4s ease-out;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../config.dart';
 import '../models/store.dart';
 import '../models/product.dart';
 
@@ -7,15 +8,17 @@ class ApiService {
   // Change this to your computer's local IP address when testing on a real device
   // For emulator: use 10.0.2.2
   // For real device: use your computer's IP (e.g., 192.168.1.100)
-  static const String baseUrl = 'http://localhost:8080';
+  static const String baseUrl = AppConfig.apiBaseUrl;
 
-  Future<List<Store>> getAllStores() async {
+  Future<List<Store>> getAllStores({int limit = 20, int offset = 0}) async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/api/stores'));
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/stores?limit=$limit&offset=$offset&sort=name&order=asc'),
+      );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        final List<dynamic> storesJson = data['stores'] ?? [];
+        final List<dynamic> storesJson = data['data'] ?? [];
         return storesJson.map((json) => Store.fromJson(json)).toList();
       } else {
         throw Exception('Failed to load stores');
@@ -25,15 +28,23 @@ class ApiService {
     }
   }
 
-  Future<List<Store>> getNearbyStores(double lat, double lon, {int radius = 5000}) async {
+  Future<List<Store>> getNearbyStores(
+    double lat,
+    double lon, {
+    int radius = 5000,
+    int limit = 20,
+    int offset = 0,
+  }) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/api/stores/nearby?lat=$lat&lon=$lon&radius=$radius'),
+        Uri.parse(
+          '$baseUrl/api/stores/nearby?lat=$lat&lon=$lon&radius=$radius&limit=$limit&offset=$offset',
+        ),
       );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        final List<dynamic> storesJson = data['stores'] ?? [];
+        final List<dynamic> storesJson = data['data'] ?? [];
         return storesJson.map((json) => Store.fromJson(json)).toList();
       } else {
         throw Exception('Failed to load nearby stores');
@@ -43,13 +54,15 @@ class ApiService {
     }
   }
 
-  Future<List<Product>> getAllProducts() async {
+  Future<List<Product>> getAllProducts({int limit = 20, int offset = 0}) async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/api/products'));
+      final response = await http.get(
+        Uri.parse('$baseUrl/api/products?limit=$limit&offset=$offset&sort=name&order=asc'),
+      );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        final List<dynamic> productsJson = data['products'] ?? [];
+        final List<dynamic> productsJson = data['data'] ?? [];
         return productsJson.map((json) => Product.fromJson(json)).toList();
       } else {
         throw Exception('Failed to load products');

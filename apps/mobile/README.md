@@ -1,5 +1,17 @@
 # Flutter Mobile App
 
+## API 接続先
+
+API のベース URL は `--dart-define` で切り替え可能です。
+
+```bash
+# Android エミュレータ
+flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8080
+
+# 実機 (PC の IP を指定)
+flutter run --dart-define=API_BASE_URL=http://192.168.1.100:8080
+```
+
 ## テスト実行
 
 ### 基本的なテスト
