@@ -1,7 +1,7 @@
 # 🛒 価格比較アプリ (Price Comparison App)
 <img width="1505" height="748" alt="image" src="https://github.com/user-attachments/assets/4c5ef2e0-7e39-47aa-a885-ce90a4891ff2" />
 
-日本のスーパーマーケット価格比較アプリ - Mercari/CyberAgent スタイルの企業級アーキテクチャ
+日本のスーパーマーケット価格比較アプリ - 企業級アーキテクチャ
 
 [![Tech Stack](https://img.shields.io/badge/Go-1.21-00ADD8?logo=go)](https://go.dev/)
 [![Next.js](https://img.shields.io/badge/Next.js-14-000000?logo=next.js)](https://nextjs.org/)
