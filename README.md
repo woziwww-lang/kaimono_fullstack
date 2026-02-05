@@ -1,4 +1,5 @@
 # 🛒 価格比較アプリ (Price Comparison App)
+<img width="1505" height="748" alt="image" src="https://github.com/user-attachments/assets/4c5ef2e0-7e39-47aa-a885-ce90a4891ff2" />
 
 日本のスーパーマーケット価格比較アプリ - Mercari/CyberAgent スタイルの企業級アーキテクチャ
 
