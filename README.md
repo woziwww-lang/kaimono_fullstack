@@ -1,8 +1,6 @@
 # 🛒 価格比較アプリ (Price Comparison App)
 <img width="1505" height="748" alt="image" src="https://github.com/user-attachments/assets/4c5ef2e0-7e39-47aa-a885-ce90a4891ff2" />
 
-日本のスーパーマーケット価格比較アプリ - 企業級アーキテクチャ
-
 [![Tech Stack](https://img.shields.io/badge/Go-1.21-00ADD8?logo=go)](https://go.dev/)
 [![Next.js](https://img.shields.io/badge/Next.js-14-000000?logo=next.js)](https://nextjs.org/)
 [![Flutter](https://img.shields.io/badge/Flutter-3.0-02569B?logo=flutter)](https://flutter.dev/)
@@ -522,49 +520,3 @@ terraform apply
 ```
 
 デプロイ詳細は `infrastructure/terraform/README.md` を参照（今後追加予定）。
-
----
-
-## 📊 面接でアピールできるポイント
-
-### 1. **最新技術の採用**
-- Turbopack (Webpack の次世代版)
-- Vitest (Jest の高速版)
-- pnpm (npm より効率的)
-
-### 2. **パフォーマンス意識**
-- ビルド時間を 3.5 倍高速化
-- PostGIS で地理空間クエリを最適化
-- Monorepo でコード共有を効率化
-
-### 3. **企業級アーキテクチャ**
-- Clean Architecture (Repository パターン)
-- Monorepo 管理 (複数プロジェクトの統合)
-- 型安全な API 設計
-
-### 4. **日本企業のトレンド**
-- Mercari/CyberAgent が採用する技術スタック
-- Go + Next.js の組み合わせ
-- PostGIS による位置情報サービス
-
----
-
-## 📝 ライセンス
-
-MIT License
-
----
-
-## 🤝 コントリビューション
-
-プルリクエスト歓迎！
-
-1. Fork this repository
-2. Create your feature branch (`git checkout -b feature/amazing`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing`)
-5. Open a Pull Request
-
----
-
-**Made with ❤️ for Japanese Tech Companies**
