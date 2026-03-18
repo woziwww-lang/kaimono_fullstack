@@ -59,11 +59,6 @@
 最適化 (pnpm + Turbopack + Vitest): ~17秒  ⚡ 3.5倍高速
 ```
 
-**日本企業での採用実績:**
-- Mercari: Turborepo + pnpm
-- CyberAgent: Go + Next.js
-- LINE: Monorepo アーキテクチャ
-
 ### テストフレームワーク比較
 
 | プラットフォーム | フレームワーク | コマンド | 特徴 |
